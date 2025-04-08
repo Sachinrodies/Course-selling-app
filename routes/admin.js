@@ -13,7 +13,7 @@ adminRouter.post("/signin",(req,res)=>{
         message:"signin endpoints"
     })
 })
-adminRouter.get("/course",(req,res)=>{
+adminRouter.get("/",(req,res)=>{
     res.json({
         message:"purchase endpoints"
     })
