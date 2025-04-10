@@ -2,7 +2,8 @@ const {Router}=require("express");
 const {userModel}=require("../db");
 
 const {z}=require("zod");
-const{auth,JWT_SECRET}=require("../auth");
+const {USER_JWT_SECRET}=require("../config");
+const {userMiddleware}=require("../middleware/user");
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
 const userRouter=Router();
@@ -100,7 +101,7 @@ userRouter.post("/signin", async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, response.password);
 
         if (passwordMatch) {
-            const token = jwt.sign({ id: response._id.toString() }, JWT_SECRET);
+            const token = jwt.sign({ id: response._id.toString() }, USER_JWT_SECRET);
             res.json({ token });
         } else {
             res.status(401).json({ message: "Invalid credentials" });

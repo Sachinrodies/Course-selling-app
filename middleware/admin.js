@@ -1,8 +1,9 @@
 const jwt=require("jsonwebtoken");
-const JWT_SECRET="sachin_jha";
-function auth(res,res,next){
-    const token=req.headers.authorization;
-    const response=jwt.verify(token,JWT_SECRET);
+const {ADMIN_JWT_SECRET}=require("../config");
+
+function adminMiddleware(res,res,next){
+    const token=req.headers.token;
+    const response=jwt.verify(token,);
     if(response){
         res.userId=token.userId;
         next();
@@ -17,9 +18,9 @@ function auth(res,res,next){
 }
 
 module.exports={
-    auth,
-
-    JWT_SECRET
+    adminMiddleware:
+        adminMiddleware
+   
 }
 
 
