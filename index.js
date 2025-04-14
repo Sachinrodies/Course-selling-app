@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express=require("express");
+console.log(process.env.MONGO_URL);
+
 
 const mongoose=require("mongoose");
 const {userRouter}=require("./routes/user");
