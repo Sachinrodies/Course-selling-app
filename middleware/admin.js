@@ -1,5 +1,5 @@
 const jwt=require("jsonwebtoken");
-const {ADMIN_JWT_SECRET}=process.env;
+const {ADMIN_JWT_SECRET}=require("../config");
 
 function adminMiddleware(res,res,next){
     const token=req.headers.token;

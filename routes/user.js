@@ -2,7 +2,7 @@ const {Router}=require("express");
 const {userModel}=require("../db");
 
 const {z}=require("zod");
-const {USER_JWT_SECRET}=process.env;
+const {USER_JWT_SECRET}=require("../config");
 const {userMiddleware}=require("../middleware/user");
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");

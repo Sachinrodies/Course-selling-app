@@ -1,5 +1,5 @@
 const jwt=require("jsonwebtoken");
-const {USER_JWT_SECRET}=process.env;
+const {USER_JWT_SECRET}=require("../config");
 
 function userMiddleware(res,res,next){
     const token=req.headers.token;
