@@ -7,6 +7,7 @@ const jwt=require("jsonwebtoken");
 
 const {ADMIN_JWT_SECRET}=require("../config");
 const {adminMiddleware}=require("../middleware/admin");
+const admin = require("../middleware/admin");
 
 
 
@@ -139,15 +140,37 @@ adminRouter.post("/course",adminMiddleware,async(req,res)=>{
    
 
 })
-adminRouter.put("/course",(req,res)=>{
-    res.json({
-        message:"purchase endpoints"
-    })
+adminRouter.put("/course",adminMiddleware,async(req,res)=>{
+   const adminId=req.adminId;
+   const {courseId,title,description,price,imageUrl}=req.body;
+   const course =await courseModel.updateOne({
+    _id:courseId,
+    creator_id:adminId
+   },{
+    title:title,
+    description:description,
+    price:price,
+    imageUrl:imageUrl,
+    
+   })
+   res.json({
+    message:"course updated successfully",
+    course_id:course._id,
+
+    
+   })
 })
-adminRouter.get("/course/bulk",(req,res)=>{    
-    res.json({
-        message:"purchase endpoints"
+adminRouter.get("/course/bulk",adminMiddleware,async(req,res)=>{  
+    const adminId=req.adminId;
+    const course=await courseModel.find({
+        creator_id:adminId
     })
+    res.json({
+        message:"courses fetched successfully",
+        courses:course
+    })
+    
+    
 }
 )
 
