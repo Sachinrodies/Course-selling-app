@@ -4,6 +4,7 @@ const {courseModel}=require("../db");
 const {z}=require("zod");
 const {USER_JWT_SECRET}=require("../config");
 const {userMiddleware}=require("../middleware/user");
+const {purchaseModel}=require("../db");
 
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
@@ -114,11 +115,48 @@ userRouter.post("/signin", async (req, res) => {
         });
     }
 });
+userRouter.post("/course",userMiddleware,async(req,res)=>{
+    const userId=req.userId;
+    const {title,description,price,imageUrl}=req.body;
+    
+     const course=await courseModel.create({
+         title:title,
+         description:description,
+         imageUrl:imageUrl,
+         price:price,
+         creator_id:userId
+ 
+ 
+ 
+     })
+     res.json({
+         message:"course created successfully",
+         course_id:course._id,
+         
+         
+     })
+    
+ 
+ })
 
-userRouter.get("/purchase",(req,res)=>{
-    res.json({
-        message:"purchase endpoints"
+userRouter.get("/purchase",userMiddleware,async(req,res)=>{
+    const userId=req.userId;
+    const purchases=await purchaseModel.find({userId});
+    let purchasedCourseIds = [];
+
+    for (let i = 0; i<purchases.length;i++){ 
+        purchasedCourseIds.push(purchases[i].courseId)
+    }
+
+    const coursesData = await courseModel.find({
+        _id: { $in: purchasedCourseIds }
     })
+    res.json({
+        purchases,
+        coursesData
+    })
+  
+
 })
 
 module.exports={

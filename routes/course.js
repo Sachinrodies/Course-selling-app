@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const { adminMiddleware } = require("../middleware/admin");
 const { courseModel } = require("../db");
+const {purchaseModel}=require("../db");
+const { userMiddleware } = require("../middleware/user");
 const courseRouter = Router();
 
 // Protected routes (require admin authentication)
@@ -42,17 +44,24 @@ courseRouter.put("/:courseId", adminMiddleware, async (req, res) => {
 });
 
 // Public routes
-courseRouter.post("/purchase", (req, res) => {
+courseRouter.post("/purchase",userMiddleware, async(req, res) => {
+    const userId=req.userId;
+    const {courseId}=req.body;
+    await purchaseModel.create({
+      userId:userId,
+      courseId:courseId
+    })
     res.json({
-        message: "signin endpoints"
-    });
+      message:"purchase successfull"
+    })
 });
 
-courseRouter.get("/preview", (req, res) => {
+courseRouter.get("/preview",async(req,res)=>{
+    const courses=await courseModel.find({});
     res.json({
-        message: "courses preview endpoints"
-    });
-});
+        courses:courses
+    })
+})
 
 module.exports = {
     courseRouter
