@@ -7,6 +7,7 @@ const jwt=require("jsonwebtoken");
 
 const {ADMIN_JWT_SECRET}=require("../config");
 const {adminMiddleware}=require("../middleware/admin");
+const {courseModel}=require("../db");
 const admin = require("../middleware/admin");
 
 
@@ -140,26 +141,43 @@ adminRouter.post("/course",adminMiddleware,async(req,res)=>{
    
 
 })
-adminRouter.put("/course",adminMiddleware,async(req,res)=>{
-   const adminId=req.adminId;
-   const {courseId,title,description,price,imageUrl}=req.body;
-   const course =await courseModel.updateOne({
-    _id:courseId,
-    creator_id:adminId
-   },{
-    title:title,
-    description:description,
-    price:price,
-    imageUrl:imageUrl,
-    
-   })
-   res.json({
-    message:"course updated successfully",
-    course_id:course._id,
+adminRouter.put("/course", adminMiddleware, async (req, res) => {
+    const adminId = req.adminId;
+    const { title, description, imageUrl, price, courseId } = req.body;
 
-    
-   })
-})
+    try {
+        const result = await courseModel.updateOne(
+            {
+                _id: courseId,
+                creator_id: adminId
+            },
+            {
+                $set: {
+                    title: title,
+                    description: description,
+                    imageUrl: imageUrl,
+                    price: price
+                }
+            }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({
+                message: "Course not found or you don't have permission to update it"
+            });
+        }
+
+        res.json({
+            message: "Course updated successfully",
+            courseId: courseId
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating course",
+            error: error.message
+        });
+    }
+});
 adminRouter.get("/course/bulk",adminMiddleware,async(req,res)=>{  
     const adminId=req.adminId;
     const course=await courseModel.find({
